@@ -14,7 +14,7 @@ class Emulator:
     
     def execute(self):
         while True:
-            command = input()
+            command = input(f'{self.username}@{self.computername}:{self.current_path} ')
             self.history.append(command)
             self.__log_command(command)
             self.__execute_command(command)
@@ -24,9 +24,14 @@ class Emulator:
         command_name = command_parts[0]
         
         if command_name == "ls":
-            self.__ls()
+            path = command_parts[1] if len(command_parts) > 1 else self.current_path
+            self.__ls(path)
         elif command_name == "cd":
-            self.__cd()
+            try:
+                path = command_parts[1]
+                self.__cd(path)
+            except IndexError:
+                print("cd: missing operand")
         elif command_name == "exit":
             self.filesystem.close()
             exit()
@@ -37,10 +42,41 @@ class Emulator:
         else:
             print(f"{command_name}: command not found")
 
-    def __ls(self):
-        pass
+    def __ls(self, path):
+        file_list = self.filesystem.getnames()
+        
+        if path == "/":
+            result = []
+            for item in file_list:
+                if "/" not in item:
+                    result.append(item)
+                else:
+                    parts = item.split("/")
+                    if parts[0] not in result:
+                        result.append(parts[0] + "/")
+            for item in sorted(result):
+                print(item)
+        else:
+            prefix = path[1:] + "/"
+            result = []
+            for item in file_list:
+                if item.startswith(prefix) and item != prefix:
+                    rest = item[len(prefix):]
+                    if "/" not in rest:
+                        result.append(rest)
+                    else:
+                        parts = rest.split("/")
+                        if parts[0] not in result:
+                            result.append(parts[0] + "/")
+            for item in sorted(result):
+                print(item)
+        
+        
     
     def __cd(self, path):
+        file_list = self.filesystem.getnames()
+        print(file_list)
+        
         if path == "/":
             self.current_path = "/"
             return
@@ -49,6 +85,12 @@ class Emulator:
             full_path = path
         else:
             full_path = os.path.join(self.current_path, path)
+            
+        if full_path[1:] in file_list:
+            self.current_path = full_path
+        else:
+            print(f"cd: can't cd to {path}: No such file or directory")
+        
     
     def __pwd(self):
         print(self.current_path)
@@ -62,17 +104,10 @@ class Emulator:
             writer = csv.writer(f)
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             writer.writerow([timestamp, self.username, command])
-    
-    def _path_exists(self, path):
-        try:
-            # Try to get info about the path using getmember
-            self.filesystem.getmember(path)
-            return True
-        except KeyError:
-            return False
 
 def main():
-    pass
+    em = Emulator("user", "computer", "test.tar", "log.csv")
+    em.execute()
 
 if __name__ == "__main__":
     main()
