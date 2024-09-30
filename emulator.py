@@ -20,18 +20,22 @@ class Emulator:
             self.__execute_command(command)
     
     def __execute_command(self, command):
-        if command == "ls":
+        command_parts = command.split()
+        command_name = command_parts[0]
+        
+        if command_name == "ls":
             self.__ls()
-        elif command == "cd":
+        elif command_name == "cd":
             self.__cd()
-        elif command == "exit":
-            self.__exit()
-        elif command == "pwd":
+        elif command_name == "exit":
+            self.filesystem.close()
+            exit()
+        elif command_name == "pwd":
             self.__pwd()
-        elif command == "history":
+        elif command_name == "history":
             self.__history()
         else:
-            print(f"{command}: command not found")
+            print(f"{command_name}: command not found")
 
     def __ls(self):
         pass
@@ -45,9 +49,6 @@ class Emulator:
             full_path = path
         else:
             full_path = os.path.join(self.current_path, path)
-    
-    def __exit(self):
-        pass
     
     def __pwd(self):
         print(self.current_path)
