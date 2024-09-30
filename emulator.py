@@ -62,6 +62,14 @@ class Emulator:
             writer = csv.writer(f)
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             writer.writerow([timestamp, self.username, command])
+    
+    def _path_exists(self, path):
+        try:
+            # Try to get info about the path using getmember
+            self.filesystem.getmember(path)
+            return True
+        except KeyError:
+            return False
 
 def main():
     pass
