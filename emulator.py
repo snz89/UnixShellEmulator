@@ -88,9 +88,14 @@ class Emulator:
         else:
             full_path = os.path.join(self.current_path, path)
 
-        if full_path[1:] in file_list:
-            self.current_path = full_path
-        else:
+        try:
+            tarinfo = self.filesystem.getmember(full_path[1:])
+            
+            if tarinfo.isdir():
+                self.current_path = full_path
+            else:
+                print(f"cd: {path}: Not a directory")
+        except KeyError:
             print(f"cd: can't cd to {path}: No such file or directory")
 
     def __pwd(self):
