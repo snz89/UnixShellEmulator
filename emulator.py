@@ -50,7 +50,12 @@ class Emulator:
     def __ls(self, path):
         file_list = self.filesystem.getnames()
 
-        if path == "/":
+        if path.startswith("/"):
+            full_path = path
+        else:
+            full_path = os.path.join(self.current_path, path).replace("\\", "/")
+
+        if full_path == "/":
             result = []
             for item in file_list:
                 if "/" not in item:
@@ -62,7 +67,7 @@ class Emulator:
             for item in sorted(result):
                 print(item)
         else:
-            prefix = path[1:] + "/"
+            prefix = full_path[1:] + "/"
             result = []
             for item in file_list:
                 if item.startswith(prefix) and item != prefix:
