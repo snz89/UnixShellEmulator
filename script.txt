@@ -1,0 +1,7 @@
+ls
+cd java_prac_4
+ls
+ls app
+cd /
+ls java_prac_4/app
+cd java_prac_4/app

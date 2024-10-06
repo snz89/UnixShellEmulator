@@ -16,6 +16,8 @@ class Emulator:
         self.history = []
 
     def execute(self):
+        if self.script_file:
+            self.__run_script(self.script_file)
         while True:
             command = input(
                 f'{self.username}@{self.computername}:{self.current_path} ')
@@ -115,6 +117,19 @@ class Emulator:
             writer = csv.writer(f)
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             writer.writerow([timestamp, self.username, command])
+    
+    def __run_script(self, script_file):
+        try:
+            with open(script_file, "r") as f:
+                for line in f:
+                    command = line.strip()
+                    print(f'{self.username}@{self.computername}:{self.current_path} {command}')
+                    self.history.append(command)
+                    self.__log_command(command)
+                    self.__execute_command(command)
+        except FileNotFoundError:
+            print(f"{script_file}: No such file or directory")
+                    
 
 
 def main():
