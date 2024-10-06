@@ -86,7 +86,7 @@ class Emulator:
         if path.startswith("/"):
             full_path = path
         else:
-            full_path = os.path.join(self.current_path, path)
+            full_path = os.path.join(self.current_path, path).replace("\\", "/")
 
         try:
             tarinfo = self.filesystem.getmember(full_path[1:])
