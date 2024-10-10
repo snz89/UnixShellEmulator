@@ -17,39 +17,39 @@ class Emulator:
 
     def execute(self):
         if self.script_file:
-            self.__run_script(self.script_file)
+            self.run_script(self.script_file)
         while True:
             command = input(
                 f'{self.username}@{self.computername}:{self.current_path} ')
             self.history.append(command)
-            self.__log_command(command)
-            self.__execute_command(command)
+            self.log_command(command)
+            self.execute_command(command)
 
-    def __execute_command(self, command):
+    def execute_command(self, command):
         command_parts = command.split()
         command_name = command_parts[0]
 
         if command_name == "ls":
             path = command_parts[1] if len(
                 command_parts) > 1 else self.current_path
-            self.__ls(path)
+            self.ls(path)
         elif command_name == "cd":
             try:
                 path = command_parts[1]
-                self.__cd(path)
+                self.cd(path)
             except IndexError:
                 print("cd: missing operand")
         elif command_name == "exit":
             self.filesystem.close()
             exit()
         elif command_name == "pwd":
-            self.__pwd()
+            self.pwd()
         elif command_name == "history":
-            self.__history()
+            self.history()
         else:
             print(f"{command_name}: command not found")
 
-    def __ls(self, path):
+    def ls(self, path):
         file_list = self.filesystem.getnames()
 
         if path.startswith("/"):
@@ -83,7 +83,7 @@ class Emulator:
             for item in sorted(list(result)):
                 print(item)
 
-    def __cd(self, path):
+    def cd(self, path):
         file_list = self.filesystem.getnames()
 
         if path == "/":
@@ -105,28 +105,28 @@ class Emulator:
         except KeyError:
             print(f"cd: can't cd to {path}: No such file or directory")
 
-    def __pwd(self):
+    def pwd(self):
         print(self.current_path)
 
-    def __history(self):
+    def history(self):
         for i, command in enumerate(self.history):
             print(f"{i+1} {command}")
 
-    def __log_command(self, command):
+    def log_command(self, command):
         with open(self.log_file, "a", newline="") as f:
             writer = csv.writer(f)
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             writer.writerow([timestamp, self.username, command])
     
-    def __run_script(self, script_file):
+    def run_script(self, script_file):
         try:
             with open(script_file, "r") as f:
                 for line in f:
                     command = line.strip()
                     print(f'{self.username}@{self.computername}:{self.current_path} {command}')
                     self.history.append(command)
-                    self.__log_command(command)
-                    self.__execute_command(command)
+                    self.log_command(command)
+                    self.execute_command(command)
         except FileNotFoundError:
             print(f"{script_file}: No such file or directory")
                     

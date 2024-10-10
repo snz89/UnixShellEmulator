@@ -27,5 +27,5 @@ python emulator.py -u [username] -c [computername] [filesystem.tar] -l [logfile.
 **Example:**
 
 ```bash
-python emulator.py -u myuser -c mycomputer myfilesystem.tar -l mylog.csv -s myscript.sh 
+python emulator.py -u myuser -c mycomputer myfilesystem.tar -l mylog.csv -s myscript.txt 
 ```
