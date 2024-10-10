@@ -91,8 +91,6 @@ class Emulator:
                 print(f"ls: {path}: No such file or directory")
 
     def cd(self, path):
-        file_list = self.filesystem.getnames()
-
         if path == "/":
             self.current_path = "/"
             return
