@@ -1,4 +1,10 @@
-log.csv
+test/test_ls.py
+
+# Log file
+data/log.csv
+
+# Launch templates (bat)
+*.bat
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

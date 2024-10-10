@@ -58,29 +58,29 @@ class Emulator:
             full_path = os.path.join(self.current_path, path).replace("\\", "/")
 
         if full_path == "/":
-            result = []
+            result = set()
             for item in file_list:
+                tarinfo = self.filesystem.getmember(item)
                 if "/" not in item:
-                    result.append(item)
+                    result.add(item + ("/" if tarinfo.isdir() else ""))
                 else:
                     parts = item.split("/")
-                    if parts[0] not in result:
-                        result.append(parts[0] + "/")
-            for item in sorted(result):
+                    result.add(parts[0] + ("/" if self.filesystem.getmember(parts[0]).isdir() else ""))
+            for item in sorted(list(result)):
                 print(item)
         else:
             prefix = full_path[1:] + "/"
-            result = []
+            result = set()
             for item in file_list:
                 if item.startswith(prefix) and item != prefix:
                     rest = item[len(prefix):]
+                    tarinfo = self.filesystem.getmember(item)
                     if "/" not in rest:
-                        result.append(rest)
+                        result.add(rest + ("/" if tarinfo.isdir() else ""))
                     else:
                         parts = rest.split("/")
-                        if parts[0] not in result:
-                            result.append(parts[0] + "/")
-            for item in sorted(result):
+                        result.add(parts[0] + ("/" if self.filesystem.getmember(prefix + parts[0]).isdir() else ""))
+            for item in sorted(list(result)):
                 print(item)
 
     def __cd(self, path):
