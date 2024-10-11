@@ -45,7 +45,7 @@ class Emulator:
         elif command_name == "pwd":
             self.pwd()
         elif command_name == "history":
-            self.history()
+            self.print_history()
         else:
             print(f"{command_name}: command not found")
 
@@ -114,7 +114,7 @@ class Emulator:
     def pwd(self):
         print(self.current_path)
 
-    def history(self):
+    def print_history(self):
         for i, command in enumerate(self.history):
             print(f"{i+1} {command}")
 
