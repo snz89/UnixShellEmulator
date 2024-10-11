@@ -59,6 +59,19 @@ class TestEmulator(unittest.TestCase):
         expected_output = "cd: java_prac_4/app/TestCar.java: Not a directory"
         self.assert_output(expected_output, self.emulator.cd,
                            path="java_prac_4/app/TestCar.java")
+    
+    # pwd tests
+    def test_pwd_initial_directory(self):
+        self.assert_output("/", self.emulator.pwd)
+
+    def test_pwd_after_cd(self):
+        self.emulator.cd("java_prac_3")
+        self.assert_output("/java_prac_3", self.emulator.pwd)
+
+    def test_pwd_after_cd_and_back(self):
+        self.emulator.cd("/java_prac_3")
+        self.emulator.cd("/")
+        self.assert_output("/", self.emulator.pwd)
 
 
 if __name__ == '__main__':
