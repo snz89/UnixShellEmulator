@@ -72,6 +72,24 @@ class TestEmulator(unittest.TestCase):
         self.emulator.cd("/java_prac_3")
         self.emulator.cd("/")
         self.assert_output("/", self.emulator.pwd)
+    
+    # history tests
+    def test_history_initial(self):
+        command = "history"
+        self.emulator.history.append(command)
+        self.assert_output("1 history", self.emulator.print_history)
+        
+    def test_history_cd(self):
+        command = "history"
+        self.emulator.history.append("cd java_prac_3")
+        self.emulator.history.append(command)
+        self.assert_output(["1 cd java_prac_3", "2 history"], self.emulator.print_history)
+    
+    def test_history_wrong_command(self):
+        command = "history"
+        self.emulator.history.append("hello")
+        self.emulator.history.append(command)
+        self.assert_output(["1 hello", "2 history"], self.emulator.print_history)
 
 
 if __name__ == '__main__':
