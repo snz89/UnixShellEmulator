@@ -8,7 +8,7 @@ class TestEmulator(unittest.TestCase):
 
     def setUp(self):
         self.emulator = Emulator(
-            "testuser", "testcomputer", "data/test.tar", "test_log.csv", None)
+            "testuser", "testcomputer", "example_data/test.tar", "test_log.csv", None)
 
     def tearDown(self):
         if self.emulator.filesystem:

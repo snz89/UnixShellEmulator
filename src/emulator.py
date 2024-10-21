@@ -2,7 +2,7 @@ import tarfile
 import csv
 import os
 import datetime
-import argparse
+import sys
 
 
 class Emulator:
@@ -26,7 +26,12 @@ class Emulator:
             self.execute_command(command)
 
     def execute_command(self, command):
-        command_parts = command.split()
+        command_parts = command.strip().split()
+
+        if not command_parts:
+            print("No command entered. Please try again.")
+            return
+
         command_name = command_parts[0]
 
         if command_name == "ls":
@@ -41,7 +46,7 @@ class Emulator:
                 print("cd: missing operand")
         elif command_name == "exit":
             self.filesystem.close()
-            exit()
+            sys.exit()
         elif command_name == "pwd":
             self.pwd()
         elif command_name == "history":
@@ -136,25 +141,3 @@ class Emulator:
                     self.execute_command(command)
         except FileNotFoundError:
             print(f"{script_file}: No such file or directory")
-
-
-def main():
-    parser = argparse.ArgumentParser(description="Unix Shell Emulator")
-
-    parser.add_argument("-u", "--user", default="localhost", help="Username")
-    parser.add_argument("-c", "--computer",
-                        default="localhost", help="Username")
-    parser.add_argument("filename", help="Path to the filesystem tar archive")
-    parser.add_argument("-l", "--log", default="log.csv",
-                        help="Path to the logfile")
-    parser.add_argument("-s", "--script", help="Path to the start script")
-
-    args = parser.parse_args()
-
-    emulator = Emulator(args.user, args.computer,
-                        args.filename, args.log, args.script)
-    emulator.execute()
-
-
-if __name__ == "__main__":
-    main()
