@@ -29,3 +29,27 @@ python emulator.py -u [username] -c [computername] [filesystem.tar] -l [logfile.
 ```bash
 python emulator.py -u myuser -c mycomputer myfilesystem.tar -l mylog.csv -s myscript.txt 
 ```
+
+## Docker Usage
+
+You can easily run the UnixShellEmulator using Docker. This allows for a consistent environment without needing to install dependencies on your local machine.
+
+### Prerequisites
+
+- Install Docker on your system. Follow the instructions at [Docker Installation](https://docs.docker.com/get-docker/).
+
+### Build the Docker Image
+
+Navigate to the project directory where your `Dockerfile` is located, and build the Docker image with the following command:
+
+```bash
+docker build -t unixshell-emulator .
+```
+
+### Run the Emulator
+
+To run the emulator, you can mount a local directory containing your tar archive and log file. Use the following command:
+
+```bash
+docker run -it --rm -v /path/to/local/directory:/app/data unixshell-emulator /app/data/filesystem.tar -u [username] -c [computername] -l /app/data/logfile.csv -s /app/data/script.txt
+```

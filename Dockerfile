@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY . /app
 
-ENTRYPOINT [ "python", "src/main.py" ]
+ENTRYPOINT [ "sh", "-c", "if [ \"$RUN_TESTS\" = 'true' ]; then python -m unittest test.tests; else python src/main.py -u user -c mycomputer -l data/log.csv; fi" ]
 
 CMD ["-u", "user", "-c", "mycomputer", "-l", "data/log.csv"]

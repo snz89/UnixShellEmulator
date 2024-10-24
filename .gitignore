@@ -1,5 +1,5 @@
-# Log file
-data/log.csv
+# Example data
+example_data/
 
 # Launch templates (bat)
 *.bat

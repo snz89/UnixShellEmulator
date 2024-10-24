@@ -1,8 +1,6 @@
 .venv
 build
 example_data
-README.md
-LICENSE
 
 # Launch templates (bat)
 *.bat

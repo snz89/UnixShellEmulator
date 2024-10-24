@@ -1,7 +1,8 @@
 import unittest
-from src.emulator import Emulator
 import io
 from contextlib import redirect_stdout
+
+from src.emulator import Emulator
 
 
 class TestEmulator(unittest.TestCase):
@@ -15,6 +16,7 @@ class TestEmulator(unittest.TestCase):
             self.emulator.filesystem.close()
 
     def assert_output(self, expected_output, method, *args, **kwargs):
+        """Asserts that calling method with the given arguments produces the expected output to stdout."""
         f = io.StringIO()
         with redirect_stdout(f):
             method(*args, **kwargs)
@@ -33,63 +35,67 @@ class TestEmulator(unittest.TestCase):
             "java_prac_3/",
             "java_prac_4/",
         ]
-        self.assert_output(expected_output, self.emulator.ls, path="/")
+        self.assert_output(
+            expected_output, self.emulator.execute_command, "ls /")
 
     def test_ls_relative(self):
         expected_output = ["vehicles/"]
         self.assert_output(
-            expected_output, self.emulator.ls, path="java_prac_3")
+            expected_output, self.emulator.execute_command, "ls java_prac_3")
 
     def test_ls_invalid_path(self):
         expected_output = "ls: someshittyfile: No such file or directory"
-        self.assert_output(expected_output, self.emulator.ls,
-                           path="someshittyfile")
+        self.assert_output(
+            expected_output, self.emulator.execute_command, "ls someshittyfile")
 
     # cd tests
     def test_cd_relative(self):
-        self.emulator.cd("java_prac_4")
-        self.assert_output("/java_prac_4", self.emulator.pwd)
+        expected_output = "/java_prac_3"
+        self.emulator.execute_command("cd java_prac_3")
+        self.assert_output(
+            expected_output, self.emulator.execute_command, "pwd")
 
     def test_cd_invalid_path(self):
         expected_output = "cd: can't cd to someshittyfile: No such file or directory"
-        self.assert_output(expected_output, self.emulator.cd,
-                           path="someshittyfile")
+        self.assert_output(
+            expected_output, self.emulator.execute_command, "cd someshittyfile")
 
     def test_cd_not_dir(self):
         expected_output = "cd: java_prac_4/app/TestCar.java: Not a directory"
-        self.assert_output(expected_output, self.emulator.cd,
-                           path="java_prac_4/app/TestCar.java")
-    
+        self.assert_output(
+            expected_output, self.emulator.execute_command, "cd java_prac_4/app/TestCar.java")
+
     # pwd tests
     def test_pwd_initial_directory(self):
-        self.assert_output("/", self.emulator.pwd)
+        self.assert_output("/", self.emulator.execute_command, "pwd")
 
     def test_pwd_after_cd(self):
-        self.emulator.cd("java_prac_3")
-        self.assert_output("/java_prac_3", self.emulator.pwd)
+        self.emulator.execute_command("cd java_prac_3")
+        self.assert_output(
+            "/java_prac_3", self.emulator.execute_command, "pwd")
 
     def test_pwd_after_cd_and_back(self):
-        self.emulator.cd("/java_prac_3")
-        self.emulator.cd("/")
-        self.assert_output("/", self.emulator.pwd)
-    
+        self.emulator.execute_command("cd java_prac_3")
+        self.emulator.execute_command("cd /")
+        self.assert_output("/", self.emulator.execute_command, "pwd")
+
     # history tests
     def test_history_initial(self):
-        command = "history"
-        self.emulator.history.append(command)
-        self.assert_output("1 history", self.emulator.print_history)
-        
+        self.emulator.history.append("history")
+        self.assert_output(
+            "1 history", self.emulator.execute_command, "history")
+
     def test_history_cd(self):
-        command = "history"
         self.emulator.history.append("cd java_prac_3")
-        self.emulator.history.append(command)
-        self.assert_output(["1 cd java_prac_3", "2 history"], self.emulator.print_history)
-    
+        self.emulator.history.append("history")
+        self.assert_output(["1 cd java_prac_3", "2 history"],
+                           self.emulator.execute_command, "history")
+
     def test_history_wrong_command(self):
-        command = "history"
         self.emulator.history.append("hello")
-        self.emulator.history.append(command)
-        self.assert_output(["1 hello", "2 history"], self.emulator.print_history)
+        self.emulator.history.append("history")
+        self.assert_output(["1 hello", "2 history"],
+                           self.emulator.execute_command, "history")
 
 
 if __name__ == '__main__':

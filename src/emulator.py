@@ -10,7 +10,11 @@ class Emulator:
         self.current_path = "/"
         self.username = username
         self.computername = computername
-        self.filesystem = tarfile.open(filesystem, "r")
+        try:
+            self.filesystem = tarfile.open(filesystem, "r")
+        except FileNotFoundError:
+            print(f"Error: Filesystem file '{filesystem}' not found. Exiting.")
+            sys.exit(1)
         self.log_file = log_file
         self.script_file = script
         self.history = []
@@ -26,6 +30,7 @@ class Emulator:
             self.execute_command(command)
 
     def execute_command(self, command):
+        """Parses and executes the given shell command."""
         command_parts = command.strip().split()
 
         if not command_parts:
@@ -55,6 +60,7 @@ class Emulator:
             print(f"{command_name}: command not found")
 
     def ls(self, path):
+        """Lists the contents of the specified directory within the virtual filesystem."""
         file_list = self.filesystem.getnames()
 
         if path.startswith("/"):
@@ -96,6 +102,7 @@ class Emulator:
                 print(f"ls: {path}: No such file or directory")
 
     def cd(self, path):
+        """Changes the current directory within the virtual filesystem."""
         if path == "/":
             self.current_path = "/"
             return
@@ -117,19 +124,23 @@ class Emulator:
             print(f"cd: can't cd to {path}: No such file or directory")
 
     def pwd(self):
+        """Prints the current working directory within the virtual filesystem."""
         print(self.current_path)
 
     def print_history(self):
+        """Prints the command history with line numbers."""
         for i, command in enumerate(self.history):
             print(f"{i+1} {command}")
 
     def log_command(self, command):
+        """Logs the executed command with timestamp and username to a CSV file."""
         with open(self.log_file, "a", newline="") as f:
             writer = csv.writer(f)
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             writer.writerow([timestamp, self.username, command])
 
     def run_script(self, script_file):
+        """Executes commands from a script file."""
         try:
             with open(script_file, "r") as f:
                 for line in f:
